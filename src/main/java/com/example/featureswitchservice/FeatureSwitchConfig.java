@@ -1,4 +1,4 @@
-package com.example.heroku;
+package com.example.featureswitchservice;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -8,8 +8,8 @@ import javax.ws.rs.core.MediaType;
 /**
  * Root resource (exposed at "myresource" path)
  */
-@Path("myresource")
-public class MyResource {
+@Path("feature_switch_config")
+public class FeatureSwitchConfig {
 
     /**
      * Method handling HTTP GET requests. The returned object will be sent
@@ -19,7 +19,7 @@ public class MyResource {
      */
     @GET
     @Produces(MediaType.TEXT_PLAIN)
-    public String get() {
+    public String getIt() {
         return "Hello, Heroku!";
     }
 }
