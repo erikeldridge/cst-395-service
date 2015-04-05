@@ -1,0 +1,8 @@
+feature_a:
+  os: android
+feature_b:
+  percentage: 10
+feature_c:
+  os: android
+  version: 2.3
+  percentage: 50

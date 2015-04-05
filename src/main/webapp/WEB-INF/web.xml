@@ -4,16 +4,24 @@
         version="3.0">
 
     <servlet>
-        <servlet-name>Jersey Web Application</servlet-name>
+        <servlet-name>feature-switch-service</servlet-name>
         <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
         <init-param>
+            <param-name>javax.ws.rs.Application</param-name>
+            <param-value>com.example.featureswitchservice.App</param-value>
+        </init-param>
+        <init-param>
             <param-name>jersey.config.server.provider.packages</param-name>
-            <param-value>com.example</param-value>
+            <param-value>com.example.featureswitchservice</param-value>
+        </init-param>
+        <init-param>
+            <param-name>jersey.config.server.provider.packages</param-name>
+            <param-value>com.example.featureswitchservice;org.codehaus.jackson.jaxrs</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet-mapping>
-        <servlet-name>Jersey Web Application</servlet-name>
+        <servlet-name>feature-switch-service</servlet-name>
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
 </web-app>
