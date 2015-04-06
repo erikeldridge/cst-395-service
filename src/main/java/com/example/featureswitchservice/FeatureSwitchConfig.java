@@ -1,8 +1,6 @@
 package com.example.featureswitchservice;
 
 import com.esotericsoftware.yamlbeans.YamlException;
-import com.example.featureselector.FeatureSelector;
-import com.example.featureselector.Input;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

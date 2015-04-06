@@ -35,8 +35,6 @@ public class FeatureSwitchConfigTest extends JerseyTest {
           .request()
           .get(String.class);
       HashMap<String, Boolean> expected = new HashMap<>();
-      expected.put("feature_a", true);
-      expected.put("feature_b", false);
       expected.put("feature_c", true);
       ObjectMapper mapper = new ObjectMapper();
       Map<String, Boolean> actual = mapper.readValue(json, Map.class);
