@@ -1,6 +1,12 @@
 package com.example.featureswitchservice;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.servlet.GuiceFilter;
+import com.google.inject.servlet.GuiceServletContextListener;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.servlet.DefaultServlet;
+import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.webapp.WebAppContext;
 
 /**
@@ -8,32 +14,53 @@ import org.eclipse.jetty.webapp.WebAppContext;
  * command that is used for launching should fire this main method.
  */
 public class Main {
+    static final int DEFAULT_PORT = 8080;
+
+    public static int normalizePort(String port) {
+      if (port == null || port.isEmpty()) {
+        return DEFAULT_PORT;
+      } else {
+        return Integer.valueOf(port);
+      }
+    }
+
+    public static Server createServer(int port, GuiceServletContextListener listener) {
+      final Server server = new Server(port);
+      final WebAppContext root = new WebAppContext();
+
+      // DI
+      root.addEventListener(listener);
+      root.addFilter(GuiceFilter.class, "/*", null);
+
+      root.setContextPath("/");
+
+      // Parent loader priority is a class loader setting that Jetty accepts.
+      // By default Jetty will behave like most web containers in that it will
+      // allow your application to replace non-server libraries that are part of the
+      // container. Setting parent loader priority to true changes this behavior.
+      // Read more here: http://wiki.eclipse.org/Jetty/Reference/Jetty_Classloading
+      root.setParentLoaderPriority(true);
+
+      final String webappDirLocation = "src/main/webapp/";
+      root.setDescriptor(webappDirLocation + "/WEB-INF/web.xml");
+      root.setResourceBase(webappDirLocation);
+
+      server.setHandler(root);
+
+      return server;
+    }
 
     public static void main(String[] args) throws Exception{
-        // The port that we should run on can be set into an environment variable
-        // Look for that variable and default to 8080 if it isn't there.
-        String webPort = System.getenv("PORT");
-        if (webPort == null || webPort.isEmpty()) {
-            webPort = "8080";
-        }
+        int port = normalizePort(System.getenv("PORT"));
 
-        final Server server = new Server(Integer.valueOf(webPort));
-        final WebAppContext root = new WebAppContext();
+        GuiceServletContextListener listener = new GuiceServletContextListener() {
 
-        root.setContextPath("/");
-        // Parent loader priority is a class loader setting that Jetty accepts.
-        // By default Jetty will behave like most web containers in that it will
-        // allow your application to replace non-server libraries that are part of the
-        // container. Setting parent loader priority to true changes this behavior.
-        // Read more here: http://wiki.eclipse.org/Jetty/Reference/Jetty_Classloading
-        root.setParentLoaderPriority(true);
-
-        final String webappDirLocation = "src/main/webapp/";
-        root.setDescriptor(webappDirLocation + "/WEB-INF/web.xml");
-        root.setResourceBase(webappDirLocation);
-
-        server.setHandler(root);
-
+          @Override
+          protected Injector getInjector() {
+            return Guice.createInjector(new ProductionModule());
+          }
+        };
+        Server server = createServer(port, listener);
         server.start();
         server.join();
     }
